@@ -236,6 +236,7 @@ def render_company_page(item: dict[str, Any]) -> str:
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google-site-verification" content="N0zcw6SbwF87Py3syhVJiDR9aWUG0IlKDEdmpX8xMVI" />
   <title>{name} ({domain}) SOC 2, Trust Center, AI Sub-Processors &amp; SSO Tax Report (2026)</title>
   <meta name="description" content="Live compliance &amp; technographic audit for {name} ({domain}): {platform} Trust Center, SOC 2 / ISO 27001 certifications, OpenAI/Anthropic sub-processors, DNS Identity stack, and Enterprise SSO Tax." />
   <link rel="canonical" href="{SITE_BASE_URL}/company/{item['slug']}.html" />
@@ -369,6 +370,7 @@ def render_index_page(records: list[dict[str, Any]]) -> str:
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google-site-verification" content="N0zcw6SbwF87Py3syhVJiDR9aWUG0IlKDEdmpX8xMVI" />
   <title>2026 B2B SaaS Trust Center, AI Sub-Processor &amp; SSO-Tax Index ({total} Companies Audited)</title>
   <meta name="description" content="Interactive benchmark of {total} top SaaS &amp; AI companies: compare Vanta vs Drata vs SafeBase Trust Centers, SOC 2 Type II certifications, OpenAI &amp; Anthropic sub-processor disclosures, and Enterprise SSO Tax gating." />
   <link rel="canonical" href="{SITE_BASE_URL}/" />

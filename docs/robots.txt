@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tobiaslofton.github.io/saas-trust-ai-index/sitemap.xml
