@@ -714,6 +714,8 @@ async def main() -> None:
         )
 
     # Render Sitemap with all 65 pages
+    from datetime import datetime, timezone
+    today_iso = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     urls = (
         [f"{SITE_BASE_URL}/"]
         + [f"{SITE_BASE_URL}/{h[0]}" for h in hubs]
@@ -722,7 +724,7 @@ async def main() -> None:
     sitemap_xml = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        + "\n".join(f"  <url><loc>{u}</loc></url>" for u in urls)
+        + "\n".join(f"  <url><loc>{u}</loc><lastmod>{today_iso}</lastmod></url>" for u in urls)
         + "\n</urlset>\n"
     )
     (docs_dir / "sitemap.xml").write_text(sitemap_xml, encoding="utf-8")
