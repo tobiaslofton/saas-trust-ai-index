@@ -1,34 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/openai-subprocessors.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/anthropic-subprocessors.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/sso-tax-directory.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/trust-center-examples.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/airtable-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/amplitude-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/asana-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/auth0-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/clickup-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/coda-io.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/cursor-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/datadoghq-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/deel-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/drata-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/dropbox-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/figma-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/gitlab-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/gong-io.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/grafana-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/intercom-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/launchdarkly-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/linear-app.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/make-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/mongodb-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/netlify-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/okta-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/pagerduty-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/pinecone-io.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/postman-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/render-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/retool-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/rippling-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/sentry-io.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/snyk-io.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/supabase-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/vanta-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/webflow-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/wiz-io.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/zapier-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/zendesk-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/monday-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/n8n-io.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/calendly-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/notion-so.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/ramp-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/slack-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/vercel-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/hubspot-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/loom-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/miro-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/apify-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/stripe-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/1password-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/atlassian-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/brex-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/docusign-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/snowflake-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/clay-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/posthog-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/algolia-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/box-com.html</loc></url>
   <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/cloudflare-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/mixpanel-com.html</loc></url>
+  <url><loc>https://tobiaslofton.github.io/saas-trust-ai-index/company/gusto-com.html</loc></url>
 </urlset>

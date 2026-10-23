@@ -3,15 +3,16 @@ from __future__ import annotations
 import asyncio
 import csv
 import html
+import importlib.util
 import json
+import re
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import httpx
+from bs4 import BeautifulSoup
 
-# Reuse the battle-tested audit functions from our two Apify Actors
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR / "trust-center-iam-auditor"))
 
@@ -21,7 +22,6 @@ from src.main import (  # type: ignore
     probe_status_page,
     probe_trust_center,
 )
-import importlib.util
 
 pricing_spec = importlib.util.spec_from_file_location(
     "pricing_main", str(ROOT_DIR / "saas-pricing-sso-tax-auditor" / "src" / "main.py")
@@ -60,10 +60,41 @@ TARGET_COMPANIES: list[tuple[str, str, str]] = [
     ("make.com", "Make", "Visual Automation"),
     ("n8n.io", "n8n", "AI & Workflow Automation"),
     ("apify.com", "Apify", "Web Scraping & Agent Platform"),
+    # Batch 2: 30 Additional High-Search SaaS & AI Companies
+    ("stripe.com", "Stripe", "Financial Infrastructure"),
+    ("notion.so", "Notion", "Connected Workspace & AI"),
+    ("figma.com", "Figma", "Collaborative Design"),
+    ("cursor.com", "Cursor", "AI Code Editor"),
+    ("rippling.com", "Rippling", "Workforce & IT Management"),
+    ("deel.com", "Deel", "Global HR & Payroll"),
+    ("ramp.com", "Ramp", "Corporate Cards & Spend"),
+    ("brex.com", "Brex", "Corporate Finance & Spend"),
+    ("gong.io", "Gong", "Revenue Intelligence"),
+    ("clay.com", "Clay", "GTM Data Enrichment"),
+    ("clickup.com", "ClickUp", "Productivity & Project Management"),
+    ("monday.com", "monday.com", "Work Operating System"),
+    ("coda.io", "Coda", "All-in-One Collaborative Docs"),
+    ("postman.com", "Postman", "API Development Platform"),
+    ("gitlab.com", "GitLab", "DevSecOps Platform"),
+    ("snyk.io", "Snyk", "Developer Security"),
+    ("wiz.io", "Wiz", "Cloud Security"),
+    ("box.com", "Box", "Enterprise Content Cloud"),
+    ("dropbox.com", "Dropbox", "Cloud Storage & Collaboration"),
+    ("docusign.com", "DocuSign", "Electronic Agreements"),
+    ("pagerduty.com", "PagerDuty", "Incident Management"),
+    ("launchdarkly.com", "LaunchDarkly", "Feature Management"),
+    ("algolia.com", "Algolia", "AI Search & Discovery"),
+    ("amplitude.com", "Amplitude", "Digital Analytics"),
+    ("mixpanel.com", "Mixpanel", "Product Analytics"),
+    ("pinecone.io", "Pinecone", "Vector Database for AI"),
+    ("netlify.com", "Netlify", "Web Development Platform"),
+    ("render.com", "Render", "Cloud Application Hosting"),
+    ("grafana.com", "Grafana Labs", "Observability & Dashboards"),
+    ("gusto.com", "Gusto", "Payroll & HR Platform"),
 ]
 
 APIFY_TRUST_ACTOR_URL = "https://apify.com/algernontechnologies/trust-center-iam-auditor"
-APIFY_PRICING_ACTOR_URL = "https://console.apify.com/actors/w369hVQl0hCGZg5OR"
+APIFY_PRICING_ACTOR_URL = "https://apify.com/algernontechnologies/saas-pricing-sso-tax-auditor"
 GITHUB_REPO_URL = "https://github.com/tobiaslofton/saas-trust-ai-index"
 SITE_BASE_URL = "https://tobiaslofton.github.io/saas-trust-ai-index"
 
@@ -81,7 +112,6 @@ async def scan_single_company(
         domain, dns_info, trust_info, status_info
     )
 
-    # Pricing scan (without Actor context using direct HTTP logic)
     pricing_candidates = [
         f"https://{domain}/pricing",
         f"https://www.{domain}/pricing",
@@ -94,8 +124,6 @@ async def scan_single_company(
     pricing_url = f"https://{domain}/pricing"
     combined_text = ""
     combined_html = ""
-    from bs4 import BeautifulSoup
-    import re
 
     for resp in pricing_responses:
         if not resp:
@@ -180,7 +208,7 @@ async def scan_single_company(
     }
 
 
-def render_company_page(item: dict[str, Any]) -> str:
+def render_company_page(item: dict[str, Any], total_count: int) -> str:
     name = html.escape(item["name"])
     domain = html.escape(item["domain"])
     platform = html.escape(item["trust_center_platform"])
@@ -266,7 +294,7 @@ def render_company_page(item: dict[str, Any]) -> str:
 </head>
 <body>
   <div class="container">
-    <a class="back" href="../index.html">← Back to All 30 Audited SaaS Companies</a>
+    <a class="back" href="../index.html">← Back to All {total_count} Audited SaaS Companies</a>
 
     <div class="hero">
       <div>
@@ -282,7 +310,7 @@ def render_company_page(item: dict[str, Any]) -> str:
 
     <div class="grid">
       <div class="card">
-        <h2>🛡️ Trust Center &amp; posture</h2>
+        <h2>🛡️ Trust Center &amp; Posture</h2>
         <table>
           <tr><td>Trust Platform</td><td><strong>{platform}</strong></td></tr>
           <tr><td>Trust Center URL</td><td><a href="{html.escape(item['trust_center_url'])}" target="_blank" rel="noopener" style="color:var(--blue);">{html.escape(item['trust_center_url'])}</a></td></tr>
@@ -320,7 +348,7 @@ def render_company_page(item: dict[str, Any]) -> str:
 
     <div class="cta-box">
       <h3 style="font-size:1.2rem;margin-bottom:0.35rem;">⚡ Audit Any Custom Domain or Enrich 10,000+ Leads in Clay.com &amp; n8n</h3>
-      <p style="color:var(--muted);font-size:0.92rem;">This report was generated automatically in 1.2 seconds using Algernon Technologies' live Apify Actors. Run your own vendor list or connect via MCP:</p>
+      <p style="color:var(--muted);font-size:0.92rem;">This report was generated automatically using Algernon Technologies' live Apify Actors. Run your own vendor list or connect via MCP:</p>
       <a class="btn" href="{APIFY_TRUST_ACTOR_URL}" target="_blank" rel="noopener">🛡️ Run Trust Center &amp; SOC 2 Auditor on Apify</a>
       <a class="btn btn-secondary" href="{APIFY_PRICING_ACTOR_URL}" target="_blank" rel="noopener">💸 Run SaaS Pricing &amp; SSO-Tax Auditor</a>
     </div>
@@ -330,13 +358,7 @@ def render_company_page(item: dict[str, Any]) -> str:
 """
 
 
-def render_index_page(records: list[dict[str, Any]]) -> str:
-    total = len(records)
-    openai_count = sum(1 for r in records if r["uses_openai"])
-    anthropic_count = sum(1 for r in records if r["uses_anthropic"])
-    sso_tax_count = sum(1 for r in records if r["sso_tax_gated"])
-    soc2_count = sum(1 for r in records if any("SOC 2" in c for c in r["certifications"]))
-
+def render_table_rows(records: list[dict[str, Any]], prefix: str = "") -> str:
     rows_html = ""
     for r in records:
         ai_tags = []
@@ -352,7 +374,7 @@ def render_index_page(records: list[dict[str, Any]]) -> str:
         rows_html += f"""
         <tr data-openai="{str(r['uses_openai']).lower()}" data-anthropic="{str(r['uses_anthropic']).lower()}" data-ssotax="{str(r['sso_tax_gated']).lower()}" data-platform="{html.escape(r['trust_center_platform'].lower())}">
           <td>
-            <a href="company/{r['slug']}.html" style="color:#60a5fa;font-weight:700;text-decoration:none;">{html.escape(r['name'])}</a>
+            <a href="{prefix}company/{r['slug']}.html" style="color:#60a5fa;font-weight:700;text-decoration:none;">{html.escape(r['name'])}</a>
             <div style="font-size:0.78rem;color:#9ca3af;">{html.escape(r['domain'])}</div>
           </td>
           <td><span class="pill">{html.escape(r['trust_center_platform'])}</span></td>
@@ -362,8 +384,93 @@ def render_index_page(records: list[dict[str, Any]]) -> str:
           <td style="font-size:0.83rem;">{html.escape(', '.join(r['identity_providers'][:3]) or '—')}</td>
           <td>{"$" + str(int(r["lowest_paid_price_usd"])) + "/mo" if r["lowest_paid_price_usd"] else "Custom"}</td>
           <td>{"🔒 Enterprise Gated" if r["sso_tax_gated"] else "✅ Open / Unlisted"}</td>
-          <td><a href="company/{r['slug']}.html" class="view-btn">Report →</a></td>
+          <td><a href="{prefix}company/{r['slug']}.html" class="view-btn">Report →</a></td>
         </tr>"""
+    return rows_html
+
+
+def render_hub_page(
+    slug_filename: str,
+    title: str,
+    subtitle: str,
+    meta_desc: str,
+    filtered_records: list[dict[str, Any]],
+    total_scanned: int,
+) -> str:
+    rows_html = render_table_rows(filtered_records, prefix="")
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google-site-verification" content="N0zcw6SbwF87Py3syhVJiDR9aWUG0IlKDEdmpX8xMVI" />
+  <title>{html.escape(title)}</title>
+  <meta name="description" content="{html.escape(meta_desc)}" />
+  <link rel="canonical" href="{SITE_BASE_URL}/{slug_filename}" />
+  <style>
+    :root {{ --bg:#090d16; --card:#111827; --border:#1f2937; --text:#f9fafb; --muted:#9ca3af; --accent:#10b981; --blue:#3b82f6; }}
+    * {{ box-sizing:border-box; margin:0; padding:0; }}
+    body {{ background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,sans-serif; padding:2rem 1.25rem; line-height:1.5; }}
+    .container {{ max-width:1280px; margin:0 auto; }}
+    .back {{ color:var(--blue); text-decoration:none; font-size:0.9rem; display:inline-block; margin-bottom:1.25rem; }}
+    header {{ max-width:900px; margin-bottom:2rem; }}
+    h1 {{ font-size:2rem; margin-bottom:0.65rem; }}
+    .sub {{ color:var(--muted); font-size:1rem; margin-bottom:1.25rem; }}
+    .cta-bar {{ display:flex; gap:0.85rem; flex-wrap:wrap; margin-bottom:1.75rem; }}
+    .btn {{ background:var(--accent); color:#052e16; font-weight:700; padding:0.65rem 1.15rem; border-radius:8px; text-decoration:none; font-size:0.88rem; }}
+    .btn-blue {{ background:var(--blue); color:#fff; }}
+    .table-wrap {{ background:var(--card); border:1px solid var(--border); border-radius:12px; overflow-x:auto; }}
+    table {{ width:100%; border-collapse:collapse; text-align:left; }}
+    th {{ background:#0f172a; color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; padding:0.9rem 1rem; border-bottom:1px solid var(--border); }}
+    td {{ padding:0.9rem 1rem; border-bottom:1px solid var(--border); font-size:0.9rem; }}
+    .pill {{ background:#1f2937; padding:3px 9px; border-radius:99px; font-size:0.78rem; }}
+    .view-btn {{ color:var(--accent); text-decoration:none; font-weight:600; font-size:0.85rem; }}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back" href="index.html">← Back to Full {total_scanned}-Company SaaS Security &amp; Pricing Index</a>
+    <header>
+      <h1>{html.escape(title)}</h1>
+      <p class="sub">{html.escape(subtitle)} ({len(filtered_records)} of {total_scanned} audited companies match).</p>
+      <div class="cta-bar">
+        <a class="btn" href="{APIFY_TRUST_ACTOR_URL}" target="_blank" rel="noopener">🛡️ Audit Any Domain's Trust Center on Apify</a>
+        <a class="btn btn-blue" href="{APIFY_PRICING_ACTOR_URL}" target="_blank" rel="noopener">💸 Audit SaaS Pricing &amp; SSO-Tax on Apify</a>
+      </div>
+    </header>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Trust Platform</th>
+            <th>Trust Score</th>
+            <th>Certifications</th>
+            <th>AI Sub-Processors</th>
+            <th>DNS Identity Stack</th>
+            <th>Entry Price</th>
+            <th>SSO Tax</th>
+            <th>Dossier</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows_html}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+"""
+
+
+def render_index_page(records: list[dict[str, Any]]) -> str:
+    total = len(records)
+    openai_count = sum(1 for r in records if r["uses_openai"])
+    anthropic_count = sum(1 for r in records if r["uses_anthropic"])
+    sso_tax_count = sum(1 for r in records if r["sso_tax_gated"])
+    soc2_count = sum(1 for r in records if any("SOC 2" in c for c in r["certifications"]))
+    rows_html = render_table_rows(records, prefix="")
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -382,7 +489,9 @@ def render_index_page(records: list[dict[str, Any]]) -> str:
     header {{ text-align:center; max-width:860px; margin:0 auto 2rem; }}
     h1 {{ font-size:2.2rem; margin-bottom:0.65rem; letter-spacing:-0.02em; }}
     .sub {{ color:var(--muted); font-size:1.02rem; margin-bottom:1.25rem; }}
-    .cta-bar {{ display:flex; justify-content:center; gap:0.85rem; flex-wrap:wrap; margin-bottom:2rem; }}
+    .cta-bar {{ display:flex; justify-content:center; gap:0.85rem; flex-wrap:wrap; margin-bottom:1.25rem; }}
+    .hub-links {{ display:flex; justify-content:center; gap:0.65rem; flex-wrap:wrap; margin-bottom:2rem; font-size:0.83rem; }}
+    .hub-links a {{ color:#60a5fa; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.25); padding:0.35rem 0.75rem; border-radius:99px; text-decoration:none; }}
     .btn {{ background:var(--accent); color:#052e16; font-weight:700; padding:0.7rem 1.25rem; border-radius:8px; text-decoration:none; font-size:0.9rem; }}
     .btn-blue {{ background:var(--blue); color:#fff; }}
     .btn-outline {{ background:transparent; color:var(--text); border:1px solid var(--border); }}
@@ -408,11 +517,17 @@ def render_index_page(records: list[dict[str, Any]]) -> str:
     <header>
       <div style="color:var(--accent);font-weight:700;font-size:0.82rem;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.4rem;">LIVE BENCHMARK // POWERED BY ALGERNON TECHNOLOGIES</div>
       <h1>2026 B2B SaaS Trust Center, AI Sub-Processor &amp; SSO-Tax Index</h1>
-      <p class="sub">Automated audit of <strong>{total} leading SaaS &amp; AI companies</strong>—comparing Trust Center platforms (Vanta, Drata, SafeBase), SOC 2 / ISO 27001 certifications, OpenAI &amp; Anthropic sub-processor disclosures, DNS Identity stacks, and Enterprise SSO-Tax gating.</p>
+      <p class="sub">Automated audit of <strong>{total} leading SaaS &amp; AI companies</strong>—comparing Trust Center platforms (Vanta, Drata, SafeBase, Conveyor), SOC 2 / ISO 27001 certifications, OpenAI &amp; Anthropic sub-processor disclosures, DNS Identity stacks, and Enterprise SSO-Tax gating.</p>
       <div class="cta-bar">
         <a class="btn" href="{APIFY_TRUST_ACTOR_URL}" target="_blank" rel="noopener">🛡️ Audit Any Domain on Apify ($0.10)</a>
         <a class="btn btn-blue" href="{APIFY_PRICING_ACTOR_URL}" target="_blank" rel="noopener">💸 Run SaaS Pricing &amp; SSO-Tax Auditor</a>
         <a class="btn btn-outline" href="{GITHUB_REPO_URL}" target="_blank" rel="noopener">📦 Download Raw CSV / JSON &amp; n8n Workflows</a>
+      </div>
+      <div class="hub-links">
+        <a href="openai-subprocessors.html">🤖 Companies Using OpenAI ({openai_count})</a>
+        <a href="anthropic-subprocessors.html">🧠 Companies Using Anthropic ({anthropic_count})</a>
+        <a href="sso-tax-directory.html">🔒 Enterprise SSO-Tax Directory ({sso_tax_count})</a>
+        <a href="trust-center-examples.html">🛡️ Vanta vs Drata vs SafeBase Examples</a>
       </div>
     </header>
 
@@ -501,6 +616,15 @@ async def main() -> None:
     comp_dir.mkdir(parents=True, exist_ok=True)
     data_dir.mkdir(parents=True, exist_ok=True)
 
+    json_file = data_dir / "saas_security_and_pricing_index.json"
+    existing_by_domain: dict[str, dict[str, Any]] = {}
+    if json_file.exists():
+        try:
+            for item in json.loads(json_file.read_text(encoding="utf-8")):
+                existing_by_domain[item["domain"]] = item
+        except Exception:
+            pass
+
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -508,55 +632,93 @@ async def main() -> None:
         ),
         "Accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
     }
-    sem = asyncio.Semaphore(8)
+    sem = asyncio.Semaphore(10)
 
     async with httpx.AsyncClient(headers=headers, http2=False) as client:
         async def bounded(domain: str, name: str, cat: str) -> dict[str, Any]:
+            if domain in existing_by_domain:
+                return existing_by_domain[domain]
             async with sem:
                 return await scan_single_company(client, domain, name, cat)
 
-        results = await asyncio.gather(
-            *(bounded(d, n, c) for d, n, c in TARGET_COMPANIES)
-        )
+        results = await asyncio.gather(*(bounded(d, n, c) for d, n, c in TARGET_COMPANIES))
 
     records = sorted(results, key=lambda x: (-x["trust_score"], x["name"]))
+    total = len(records)
 
-    # Save JSON and CSV
-    (data_dir / "saas_security_and_pricing_index.json").write_text(
-        json.dumps(records, indent=2), encoding="utf-8"
-    )
-    if records:
-        csv_fields = [
-            "domain",
-            "name",
-            "category",
-            "trust_score",
-            "risk_tier",
-            "trust_center_platform",
-            "trust_center_url",
-            "certifications_csv",
-            "uses_openai",
-            "uses_anthropic",
-            "subprocessors_csv",
-            "identity_providers_csv",
-            "pricing_model",
-            "lowest_paid_price_usd",
-            "has_free_tier",
-            "sso_tax_gated",
-            "status_page_indicator",
-        ]
-        with open(data_dir / "saas_security_and_pricing_index.csv", "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=csv_fields, extrasaction="ignore")
-            writer.writeheader()
-            writer.writerows(records)
+    json_file.write_text(json.dumps(records, indent=2), encoding="utf-8")
+    csv_fields = [
+        "domain",
+        "name",
+        "category",
+        "trust_score",
+        "risk_tier",
+        "trust_center_platform",
+        "trust_center_url",
+        "certifications_csv",
+        "uses_openai",
+        "uses_anthropic",
+        "subprocessors_csv",
+        "identity_providers_csv",
+        "pricing_model",
+        "lowest_paid_price_usd",
+        "has_free_tier",
+        "sso_tax_gated",
+        "status_page_indicator",
+    ]
+    with open(data_dir / "saas_security_and_pricing_index.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=csv_fields, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(records)
 
-    # Render HTML pages
+    # Render Index & Company Pages
     (docs_dir / "index.html").write_text(render_index_page(records), encoding="utf-8")
     for r in records:
-        (comp_dir / f"{r['slug']}.html").write_text(render_company_page(r), encoding="utf-8")
+        (comp_dir / f"{r['slug']}.html").write_text(render_company_page(r, total), encoding="utf-8")
 
-    # Render Sitemap
-    urls = [f"{SITE_BASE_URL}/"] + [f"{SITE_BASE_URL}/company/{r['slug']}.html" for r in records]
+    # Render 4 High-Intent Keyword Hub Pages
+    hubs = [
+        (
+            "openai-subprocessors.html",
+            "SaaS Companies Using OpenAI as a Sub-Processor (2026 Verified List)",
+            "Live Third-Party Risk Management (TPRM) directory of B2B SaaS platforms that publicly disclose OpenAI on their Trust Center or sub-processor registry",
+            "Verified 2026 list of B2B SaaS companies that disclose OpenAI as a sub-processor on their Trust Center, including SOC 2 status and data posture.",
+            [r for r in records if r["uses_openai"]],
+        ),
+        (
+            "anthropic-subprocessors.html",
+            "SaaS Companies Using Anthropic Claude as a Sub-Processor (2026 Verified List)",
+            "Live directory of B2B SaaS & AI companies that publicly disclose Anthropic on their Trust Center or sub-processor list",
+            "Verified 2026 list of B2B SaaS companies that disclose Anthropic Claude as a sub-processor on their Trust Center.",
+            [r for r in records if r["uses_anthropic"]],
+        ),
+        (
+            "sso-tax-directory.html",
+            "2026 Enterprise SSO-Tax Directory: SaaS SAML & Okta Pricing Tracker",
+            "Which B2B SaaS companies gate SAML / SCIM Single Sign-On behind an Enterprise tier vs. including SSO in standard plans",
+            "Compare B2B SaaS companies that charge an Enterprise SSO Tax for SAML/Okta/Entra ID vs. transparent pricing models.",
+            [r for r in records if r["sso_tax_gated"]],
+        ),
+        (
+            "trust-center-examples.html",
+            "Live Trust Center Examples: Vanta vs. Drata vs. SafeBase vs. Conveyor (2026)",
+            "Compare real enterprise Trust Center implementations across Vanta, SafeBase, Drata, Conveyor, Whistic, and OneTrust",
+            "Browse 60 live B2B SaaS Trust Center examples powered by Vanta, SafeBase, Drata, Conveyor, OneTrust, and custom security portals.",
+            [r for r in records if r["trust_center_platform"] != "None Detected"],
+        ),
+    ]
+    for filename, h_title, h_sub, h_meta, h_list in hubs:
+        (docs_dir / filename).write_text(
+            render_hub_page(filename, h_title, h_sub, h_meta, h_list, total),
+            encoding="utf-8",
+        )
+
+    # Render Sitemap with all 65 pages
+    urls = (
+        [f"{SITE_BASE_URL}/"]
+        + [f"{SITE_BASE_URL}/{h[0]}" for h in hubs]
+        + [f"{SITE_BASE_URL}/company/{r['slug']}.html" for r in records]
+    )
     sitemap_xml = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -565,8 +727,7 @@ async def main() -> None:
     )
     (docs_dir / "sitemap.xml").write_text(sitemap_xml, encoding="utf-8")
 
-    # Render SEO GitHub README with full Markdown dataset table
-    total = len(records)
+    # Update README
     openai_count = sum(1 for r in records if r["uses_openai"])
     anthropic_count = sum(1 for r in records if r["uses_anthropic"])
     sso_tax_count = sum(1 for r in records if r["sso_tax_gated"])
@@ -576,7 +737,7 @@ async def main() -> None:
         for r in records
     )
 
-    readme_md = f"""# 🛡️ 2026 B2B SaaS Trust Center, AI Sub-Processor & SSO-Tax Index
+    readme_md = f"""# 🛡️ 2026 B2B SaaS Trust Center, AI Sub-Processor & SSO-Tax Index ({total} Companies)
 
 🌐 **Live Interactive Directory:** [{SITE_BASE_URL}]({SITE_BASE_URL})
 
@@ -593,7 +754,7 @@ An automated compliance, AI sub-processor, and pricing benchmark across **{total
 
 ---
 
-## 📋 Full 30-Company Benchmark Table
+## 📋 Full {total}-Company Benchmark Table
 
 | Company | Trust Platform | Score | Certifications | AI Sub-Processors | DNS Identity Stack | Entry Price | SSO Tax |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -605,10 +766,11 @@ An automated compliance, AI sub-processor, and pricing benchmark across **{total
 Want to run this exact audit across your own vendor list or 10,000+ outbound prospect domains?
 - **Run Actor #1 (Trust Center, SOC 2 & DNS IAM Auditor):** [{APIFY_TRUST_ACTOR_URL}]({APIFY_TRUST_ACTOR_URL})
 - **Run Actor #2 (SaaS Pricing & Enterprise SSO-Tax Auditor):** [{APIFY_PRICING_ACTOR_URL}]({APIFY_PRICING_ACTOR_URL})
+- **1-Click n8n & Clay.com Workflows:** [https://github.com/tobiaslofton/n8n-clay-b2b-trust-center-workflows](https://github.com/tobiaslofton/n8n-clay-b2b-trust-center-workflows)
 - **Raw CSV & JSON Dataset:** Available in [`/data`](./data/)
 """
     (out_dir / "README.md").write_text(readme_md, encoding="utf-8")
-    print(f"[+] Successfully built 31 HTML pages, sitemap.xml, CSV/JSON datasets, and README.md!")
+    print(f"[+] Successfully built {len(urls)} HTML pages, sitemap.xml, CSV/JSON datasets, and README.md!")
 
 
 if __name__ == "__main__":
